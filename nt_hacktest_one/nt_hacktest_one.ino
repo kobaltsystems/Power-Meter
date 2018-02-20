@@ -16,7 +16,7 @@ EnergyMonitor ct1;                     // Create an instance
 void setup()
 {  
   Serial.begin(9600);
-  ct1.currentTX(1, 111.1);             // CT channel (see emontx PCB), calibration (2000 turns / 18 Ohm burden resistor = 111.1)
+  //ct1.currentTX(1, 111.1);             // CT channel (see emontx PCB), calibration (2000 turns / 18 Ohm burden resistor = 111.1)
 }
 
 void loop()
