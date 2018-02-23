@@ -95,18 +95,7 @@ void loop()
 
 // call voids
 ReportToSerialOut(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
-//ReportToLosant(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
-
-    // Build a JSON object with the state to report.
-    StaticJsonBuffer<1024> jsonBuffer;
-    JsonObject& state = jsonBuffer.createObject();
-    state["realPower"] = ct1.realPower;
-    state["apparentPower"] = ct1.apparentPower;
-//    state["powerFactor"] = ct1.powerFactor;
-//    state["Current"] = ct1.Irms;
-//    state["Voltage"] = ct1.Vrms;
-    // Report the state to Losant.
-    device.sendState(state);
+ReportToLosant(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 
    delay(WAIT_TIME);
 }
@@ -118,8 +107,8 @@ void ReportToLosant(float rP, int aP, float pF, float I, float V)
     StaticJsonBuffer<512> jsonBuffer;
     JsonObject& state = jsonBuffer.createObject();
     state["realPower"] = rP;
-    state["apparentPower"] = aP;
-    state["powerFactor"] = pF;
+ //   state["apparentPower"] = aP;
+ //   state["powerFactor"] = pF;
     state["Current"] = I;
     state["Voltage"] = V;
     // Report the state to Losant.
