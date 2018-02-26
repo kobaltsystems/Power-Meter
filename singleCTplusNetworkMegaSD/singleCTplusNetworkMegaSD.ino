@@ -15,9 +15,14 @@
 #include <Ethernet.h>
 #include <EthernetClient.h>
 #include <Losant.h>
+#include <SPI.h> //SD Bus
+#include <SD.h> //SD Card
 
 // create a EM instance
 EnergyMonitor ct1;
+
+// create an SD card instance
+const int chipSelect = 4;
 
 // create an ethernet instance
 EthernetClient EthClient;
@@ -54,9 +59,25 @@ void setup()
   pinMode(LEDpin, OUTPUT);                                              
   digitalWrite(LEDpin, HIGH); 
 
+// call the connect to stuff voids
 connectToInternet();
+ConnectToSD();
 
 }
+void ConnectToSD(){
+  
+  Serial.print("Initializing SD card...");
+
+  // see if the card is present and can be initialized:
+  if (!SD.begin(chipSelect)) {
+    Serial.println("Card failed, or not present");
+    // don't do anything more:
+    while (1);
+  }
+  Serial.println("card initialized.");
+  
+  }
+
 
 void connectToInternet(){
 //if (EthClient.connected())
@@ -96,8 +117,18 @@ void loop()
 // call voids
 ReportToSerialOut(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 ReportToLosant(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
+AddRecordSD(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 
    delay(WAIT_TIME);
+}
+
+void AddRecordSD(float rP, int aP, float pF, float I, float V)
+{
+
+// make a string for assembling the data to log:
+  String dataString += rP + "," + aP + "," + pF + "," + I + "," + V;
+
+  
 }
 
 void ReportToLosant(float rP, int aP, float pF, float I, float V)
