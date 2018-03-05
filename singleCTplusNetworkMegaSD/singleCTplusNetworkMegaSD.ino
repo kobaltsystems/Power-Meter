@@ -23,6 +23,9 @@
 // create a EM instance
 EnergyMonitor ct1;
 
+// RTC instance
+RTC_DS1307 RTC;
+
 // create an SD card instance
 const int chipSelect = 4;
 
@@ -55,8 +58,8 @@ void setup()
   Serial.println("OpenEnergyMonitor.org");
 
 // setup RTC 
-    Wire.begin();
-    RTC.begin();    
+Wire.begin();
+RTC.begin();
 
 // Calibration factor = CT ratio / burden resistance = (100A / 0.05A) / 33 Ohms = 60.606
   ct1.current(1, 60.606);
@@ -119,12 +122,14 @@ if (Ethernet.begin(mac) == 0) {
 void loop()
 {
 
+RTC_DS1307 RTC;
+DateTime now = RTC.now();
 
 //   Calculate all. No.of crossings, time-out 
   ct1.calcVI(20,2000);  
 
 // call voids
-ReportToSerialOut(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
+ReportToSerialOut(now, ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 ReportToLosant(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 AddRecordSD(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 
@@ -133,18 +138,13 @@ AddRecordSD(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms)
 
 void AddRecordSD(float rP, int aP, float Pf, float I, float V)
 {
-
-
-RTC_DS1307 RTC;
-DateTime now = RTC.now();
-
 // start a file
      myFile = SD.open("power_reading.csv", FILE_WRITE);
   //make sure the object exists
   if (myFile) {    
-    //myFile.print(timeStamp);
-    myFile.print(now);
-    myFile.print(",");    
+    //myFile.print(dateTime.hour(), DEC);
+    // myFile.print(now);
+//    myFile.print(",");    
     myFile.print(rP);
     myFile.print(",");    
     myFile.print(aP);
@@ -181,8 +181,10 @@ void ReportToLosant(float rP, int aP, float pF, float I, float V)
 }
 
 
-void ReportToSerialOut(float rP, int aP, float pF, float I, float V)
+void ReportToSerialOut(DateTime dateTime, float rP, int aP, float pF, float I, float V)
 {
+  Serial.print("Time");
+  Serial.print(dateTime.hour(), DEC);
   Serial.print(rP);
   Serial.print("W ");
   Serial.print(aP);
