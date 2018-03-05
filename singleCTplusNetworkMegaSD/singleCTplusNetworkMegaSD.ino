@@ -71,8 +71,7 @@ RTC.begin();
   pinMode(LEDpin, OUTPUT);                                              
   digitalWrite(LEDpin, HIGH); 
 
-// call the connect to stuff voids
-connectToInternet();
+
 ConnectToSD();
 
 }
@@ -88,14 +87,19 @@ void ConnectToSD(){
   }
   Serial.println("card initialized.");
   
+
+  // call the connect to stuff voids
+delay(500);
+connectToInternet();
+
   }
 
 
 void connectToInternet(){
-//if (EthClient.connected())
-//{
-//EthClient.stop();
-//}
+if (EthClient.connected())
+{
+EthClient.stop();
+}
 Serial.println("Connecting to the internet via ethernet...");
 // the media access control (ethernet hardware) address for the shield
 // Leave this as is if your MAC address is not labelled on your ethernet shield
@@ -122,29 +126,34 @@ if (Ethernet.begin(mac) == 0) {
 void loop()
 {
 
-RTC_DS1307 RTC;
-DateTime now = RTC.now();
-
 //   Calculate all. No.of crossings, time-out 
   ct1.calcVI(20,2000);  
+delay(500);
+
+RTC_DS1307 RTC;
+DateTime now = RTC.now();
+delay(500);
 
 // call voids
 ReportToSerialOut(now, ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 ReportToLosant(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
-AddRecordSD(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
+AddRecordSD(now, ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 
    delay(WAIT_TIME);
 }
 
-void AddRecordSD(float rP, int aP, float Pf, float I, float V)
+void AddRecordSD(DateTime dateTime,float rP, int aP, float Pf, float I, float V)
 {
 // start a file
-     myFile = SD.open("power_reading.csv", FILE_WRITE);
+     myFile = SD.open("test.txt", FILE_WRITE);
   //make sure the object exists
   if (myFile) {    
-    //myFile.print(dateTime.hour(), DEC);
-    // myFile.print(now);
-//    myFile.print(",");    
+    myFile.print(dateTime.year(), DEC);
+    myFile.print(dateTime.month(), DEC);
+    myFile.print(dateTime.day(), DEC);
+    myFile.print(dateTime.hour(), DEC);
+    myFile.print(dateTime.minute(), DEC);
+    myFile.print(",");
     myFile.print(rP);
     myFile.print(",");    
     myFile.print(aP);
@@ -184,8 +193,15 @@ void ReportToLosant(float rP, int aP, float pF, float I, float V)
 void ReportToSerialOut(DateTime dateTime, float rP, int aP, float pF, float I, float V)
 {
   Serial.print("Time");
+  Serial.print(dateTime.year(), DEC);
+  Serial.print(dateTime.month(), DEC);
+  Serial.print(dateTime.day(), DEC);
   Serial.print(dateTime.hour(), DEC);
-  Serial.print(rP);
+  Serial.print(dateTime.minute(), DEC);
+  Serial.print(dateTime.second(), DEC);
+
+  Serial.print("|||| ");
+   Serial.print(rP);
   Serial.print("W ");
   Serial.print(aP);
   Serial.print("W ");
