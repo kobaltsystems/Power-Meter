@@ -27,6 +27,9 @@ const int chipSelect = 4;
 // create an ethernet instance
 EthernetClient EthClient;
 
+// create an SD card instance
+File myFile;
+
 // Losant credentials.
 const char* LOSANT_DEVICE_ID = "5a7d08ee5672f90006c7afed";
 const char* LOSANT_ACCESS_KEY = "d7e843d2-c53e-4085-965b-5e0b0b86c543";
@@ -122,11 +125,31 @@ AddRecordSD(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms)
    delay(WAIT_TIME);
 }
 
-void AddRecordSD(float rP, int aP, float pF, float I, float V)
+void AddRecordSD(float rP, int aP, float Pf, float I, float V)
 {
 
 // make a string for assembling the data to log:
-  String dataString += rP + "," + aP + "," + pF + "," + I + "," + V;
+//  String dataString += rP + "," + aP + "," + pF + "," + I + "," + V;
+
+// start a file
+     myFile = SD.open("power_reading.csv", FILE_WRITE);
+  //make sure the object exists
+  if (myFile) {    
+    //myFile.print(timeStamp);
+    myFile.print(rP);
+    myFile.print(",");    
+    myFile.print(aP);
+    myFile.print(",");    
+    myFile.print(Pf);
+    myFile.print(",");    
+    myFile.print(I);
+    myFile.print(",");    
+    myFile.print(V);
+    myFile.print(",");    
+    myFile.println();
+    myFile.close(); // close the file
+  }
+  
 
   
 }
