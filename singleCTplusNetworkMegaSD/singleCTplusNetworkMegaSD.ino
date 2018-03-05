@@ -17,6 +17,8 @@
 #include <Losant.h>
 #include <SPI.h> //SD Bus
 #include <SD.h> //SD Card
+#include <Wire.h>
+#include <RTClib.h>
 
 // create a EM instance
 EnergyMonitor ct1;
@@ -51,6 +53,10 @@ void setup()
   while (!Serial) {}
   Serial.println("emonTX Shield Single CT with networking connected to losat"); 
   Serial.println("OpenEnergyMonitor.org");
+
+// setup RTC 
+    Wire.begin();
+    RTC.begin();    
 
 // Calibration factor = CT ratio / burden resistance = (100A / 0.05A) / 33 Ohms = 60.606
   ct1.current(1, 60.606);
@@ -128,14 +134,17 @@ AddRecordSD(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms)
 void AddRecordSD(float rP, int aP, float Pf, float I, float V)
 {
 
-// make a string for assembling the data to log:
-//  String dataString += rP + "," + aP + "," + pF + "," + I + "," + V;
+
+RTC_DS1307 RTC;
+DateTime now = RTC.now();
 
 // start a file
      myFile = SD.open("power_reading.csv", FILE_WRITE);
   //make sure the object exists
   if (myFile) {    
     //myFile.print(timeStamp);
+    myFile.print(now);
+    myFile.print(",");    
     myFile.print(rP);
     myFile.print(",");    
     myFile.print(aP);
@@ -149,9 +158,11 @@ void AddRecordSD(float rP, int aP, float Pf, float I, float V)
     myFile.println();
     myFile.close(); // close the file
   }
-  
-
-  
+    // if the file didn't open, print an error:
+  else {
+    Serial.println("error opening test.txt");
+  }
+ 
 }
 
 void ReportToLosant(float rP, int aP, float pF, float I, float V)
