@@ -137,42 +137,42 @@ delay(500);
 // call voids
 ReportToSerialOut(now, ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 ReportToLosant(ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
-AddRecordSD(now, ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
+//AddRecordSD(now, ct1.realPower, ct1.apparentPower,ct1.powerFactor, ct1.Irms,ct1.Vrms);
 
    delay(WAIT_TIME);
 }
 
-void AddRecordSD(DateTime dateTime,float rP, int aP, float Pf, float I, float V)
-{
-// start a file
-     myFile = SD.open("test.txt", FILE_WRITE);
-  //make sure the object exists
-  if (myFile) {    
-    myFile.print(dateTime.year(), DEC);
-    myFile.print(dateTime.month(), DEC);
-    myFile.print(dateTime.day(), DEC);
-    myFile.print(dateTime.hour(), DEC);
-    myFile.print(dateTime.minute(), DEC);
-    myFile.print(",");
-    myFile.print(rP);
-    myFile.print(",");    
-    myFile.print(aP);
-    myFile.print(",");    
-    myFile.print(Pf);
-    myFile.print(",");    
-    myFile.print(I);
-    myFile.print(",");    
-    myFile.print(V);
-    myFile.print(",");    
-    myFile.println();
-    myFile.close(); // close the file
-  }
-    // if the file didn't open, print an error:
-  else {
-    Serial.println("error opening test.txt");
-  }
- 
-}
+//void AddRecordSD(DateTime dateTime,float rP, int aP, float Pf, float I, float V)
+//{
+//// start a file
+//     myFile = SD.open("test.txt", FILE_WRITE);
+//  //make sure the object exists
+//  if (myFile) {    
+//    myFile.print(dateTime.year(), DEC);
+//    myFile.print(dateTime.month(), DEC);
+//    myFile.print(dateTime.day(), DEC);
+//    myFile.print(dateTime.hour(), DEC);
+//    myFile.print(dateTime.minute(), DEC);
+//    myFile.print(",");
+//    myFile.print(rP);
+//    myFile.print(",");    
+//    myFile.print(aP);
+//    myFile.print(",");    
+//    myFile.print(Pf);
+//    myFile.print(",");    
+//    myFile.print(I);
+//    myFile.print(",");    
+//    myFile.print(V);
+//    myFile.print(",");    
+//    myFile.println();
+//    myFile.close(); // close the file
+//  }
+//    // if the file didn't open, print an error:
+//  else {
+//    Serial.println("error opening test.txt");
+//  }
+// 
+//}
 
 void ReportToLosant(float rP, int aP, float pF, float I, float V)
 {

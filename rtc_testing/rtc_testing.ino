@@ -16,12 +16,12 @@ DateTime now = RTC.now();
 printDateTime(now);
 break;
 } case 'S':
-RTC.set(RTC_YEAR, 18);
-RTC.set(RTC_MONTH, 3);
-RTC.set(RTC_DAY, 5);
-RTC.set(RTC_HOUR, 17);
-RTC.set(RTC_MINUTE, 35);
-RTC.set(RTC_SECOND, 10);
+RTC.adjust(Year, 18);
+RTC.adjust(month, 3);
+RTC.adjust(day, 5);
+RTC.adjust(hour, 6);
+RTC.adjust(minute, 17);
+RTC.adjust(second, 10);
 
 break;
 }
